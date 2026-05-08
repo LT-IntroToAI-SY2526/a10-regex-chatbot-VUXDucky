@@ -8,17 +8,24 @@ from typing import List, Callable, Tuple, Any, Match
 
 def get_page_html(title: str) -> str:
     for attempt in range(5):
-        response = requests.get(
-            "https://en.wikipedia.org/w/api.php",
-            params={
-                "action": "parse",
-                "page": title,
-                "prop": "text",
-                "format": "json",
-                "redirects": True,
-            },
-            headers={"User-Agent": "intro-ai-class/1.0"}
-        )
+        try:
+            response = requests.get(
+                "https://en.wikipedia.org/w/api.php",
+                params={
+                    "action": "parse",
+                    "page": title,
+                    "prop": "text",
+                    "format": "json",
+                    "redirects": True,
+                },
+                headers={"User-Agent": "intro-ai-class/1.0"},
+                timeout=10
+            )
+        except requests.exceptions.ConnectTimeout:
+            print(f"Connection timed out, retrying '{title}'... (attempt {attempt+1}/5)")
+            time.sleep(5)
+            continue
+
         if response.status_code == 429:
             wait = int(response.headers.get("Retry-After", 5))
             print(f"Rate limited — waiting {wait}s before retrying '{title}'...")
@@ -27,10 +34,10 @@ def get_page_html(title: str) -> str:
         if response.status_code == 200 and response.text.strip():
             data = response.json()
             if "error" not in data:
-                time.sleep(2)  # polite delay after every successful call
+                time.sleep(3)
                 return data["parse"]["text"]["*"]
-    raise ConnectionError(f"Could not retrieve Wikipedia page for '{title}' after 5 attempts")
 
+    raise ConnectionError(f"Could not retrieve Wikipedia page for '{title}' after 5 attempts")
 
 def get_first_infobox_text(html: str) -> str:
     """Gets first infobox html from a Wikipedia page (summary box)
@@ -114,7 +121,8 @@ def get_birth_date(name: str) -> str:
         birth date of the given person
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?:Born\D*)(?P<birth>\d{4}-\d{2}-\d{2})"
+    print(infobox_text)
+    pattern = r"(?:Born|Date of birth.*)(?P<birth>\d{4}-\d{2}-\d{2})"
     error_text = (
         "Page infobox has no birth information (at least none in xxxx-xx-xx format)"
     )
@@ -122,6 +130,55 @@ def get_birth_date(name: str) -> str:
 
     return match.group("birth")
 
+def get_developer_game(game_name: str) -> str:
+    """Gets the dev of the given game
+
+    Args:
+        game_name - name of the game to get dev of
+
+    Returns:
+        dev of the given game
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(game_name)))
+    pattern = r"(?:Developer)(?P<developer>\w+ \w+)"
+    error_text = "Page infobox has no developer information"
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("developer")
+
+def get_show_episodes(show_name: str) -> str:
+    """Gets the episodes of the given show
+
+    Args:
+        show_name - name of the show
+
+    Returns:
+        episodes of the given show
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(show_name)))
+    print(infobox_text)
+    pattern = r"(?:Episodes|Episode)(?P<episodes>\d+)"
+    error_text = "Page infobox has no episode information"
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("episodes")
+
+def get_car_year(car_year: str) -> str:
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(car_year)))
+    print(infobox_text)
+    pattern = r"(?:Production)\w+ (?P<year>\d{4})"
+    error_text = "Page infobox has no car year information"
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("year")
 
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
@@ -151,6 +208,40 @@ def polar_radius(matches: List[str]) -> List[str]:
     """
     return [get_polar_radius(matches[0])]
 
+def show_episodes(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_show_episodes(" ".join(matches))]
+
+def year_car(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_car_year(matches[0])]
+
+def dev_game(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_developer_game(matches[0])]
+
+
 
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
@@ -167,6 +258,10 @@ Action = Callable[[List[str]], List[Any]]
 pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
+    ("how many episodes does % have".split(), show_episodes),
+    ("what year was the % made".split(), year_car),
+    ("who made % ".split(), dev_game),
+    #("when was % born".split(), place_born),
     (["bye"], bye_action),
 ]
 

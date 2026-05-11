@@ -7,6 +7,17 @@ from typing import List, Callable, Tuple, Any, Match
 
 
 def get_page_html(title: str) -> str:
+    search_response = requests.get(
+        "https://en.wikipedia.org/w/api.php",
+        params={"action": "query", "list": "search", "srsearch": title, "format": "json"},
+        headers={"User-Agent": "intro-ai-class/1.0"},
+        timeout=10
+    )
+    results = search_response.json().get("query", {}).get("search", [])
+    if results:
+        title = results[0]["title"]  # use the top search result title
+        print(f"Searching Wikipedia for: {title}")
+
     for attempt in range(5):
         try:
             response = requests.get(
@@ -174,7 +185,7 @@ def get_car_year(car_year: str) -> str:
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(car_year)))
     print(infobox_text)
-    pattern = r"(?:Production)\w+ (?P<year>\d{4})"
+    pattern = r"(?:Production)\w+ (?P<year>\d{4}) | (?:Production)(?P<year>\d{4})"
     error_text = "Page infobox has no car year information"
     match = get_match(infobox_text, pattern, error_text)
 

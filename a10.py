@@ -151,13 +151,14 @@ def get_developer_game(game_name: str) -> str:
         dev of the given game
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(game_name)))
-    pattern = r"(?:Developer)(?P<developer>\w+ \w+)"
+    print(infobox_text)
+    pattern = r"(?:Developer)(?P<developer>\w \w+)"
     error_text = "Page infobox has no developer information"
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("developer")
 
-def get_show_episodes(show_name: str) -> str:
+def get_show_episodes(show_name: str) -> str: #this works 
     """Gets the episodes of the given show
 
     Args:
@@ -167,14 +168,14 @@ def get_show_episodes(show_name: str) -> str:
         episodes of the given show
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(show_name)))
-    print(infobox_text)
+    #print(infobox_text)
     pattern = r"(?:Episodes|Episode)(?P<episodes>\d+)"
     error_text = "Page infobox has no episode information"
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("episodes")
 
-def get_car_year(car_year: str) -> str:
+def get_car_year(car_year: str) -> str: #this works 
     """Gets the year of the given car
 
     Args:
@@ -184,16 +185,33 @@ def get_car_year(car_year: str) -> str:
         year of the given car
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(car_year)))
-    print(infobox_text)
-    pattern = r"(?:Production)\w+ (?P<year>\d{4}) | (?:Production)(?P<year>\d{4})"
+    #print(infobox_text)
+    pattern = r"(?:Production\w+ |Production)(?P<year>\d{4})"
     error_text = "Page infobox has no car year information"
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("year")
 
+def get_company_industry(company_industry: str) -> str: #works 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(company_industry)))
+    #print(infobox_text)
+    pattern = r"Industry\s*(?P<industry>.+?)\s*Founded"
+    error_text = "Page infobox has no company industry information"
+    match = get_match(infobox_text, pattern, error_text)
+
+    return match.group("industry")
+
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
-# list of the answer(s) and not just the answer itself.
+# list of the answer(s) and not just the answer itself. (?:Industry)(?P<products>\w[a-z]*)
 
 
 def birth_date(matches: List[str]) -> List[str]:
@@ -252,6 +270,17 @@ def dev_game(matches: List[str]) -> List[str]:
     """
     return [get_developer_game(matches[0])]
 
+def industry(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_company_industry(matches[0])]
+
 
 
 # dummy argument is ignored and doesn't matter
@@ -269,9 +298,10 @@ Action = Callable[[List[str]], List[Any]]
 pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
-    ("how many episodes does % have".split(), show_episodes),
-    ("what year was the % made".split(), year_car),
+    ("how many episodes does % have".split(), show_episodes),# WORKS
+    ("what year was the % made".split(), year_car), # WORKS
     ("who made % ".split(), dev_game),
+    ("what is % known for ".split(), industry), # WORKS
     #("when was % born".split(), place_born),
     (["bye"], bye_action),
 ]

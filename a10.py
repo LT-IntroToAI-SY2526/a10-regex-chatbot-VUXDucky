@@ -185,7 +185,7 @@ def get_car_year(car_year: str) -> str: #this works
         year of the given car
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(car_year)))
-    #print(infobox_text)
+    print(infobox_text)
     pattern = r"(?:Production\w+ |Production)(?P<year>\d{4})"
     error_text = "Page infobox has no car year information"
     match = get_match(infobox_text, pattern, error_text)
@@ -208,7 +208,21 @@ def get_company_industry(company_industry: str) -> str: #works
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("industry")
+#Start of the new functions
+def get_height_building(building_height: str) -> str: 
+    """Gets the year of the given car
 
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(building_height)))
+    #print(infobox_text)
+    pattern = r"(?:Production\w+ |Production)(?P<height>\d{4})"
+    error_text = "Page infobox has no car year information"
+    match = get_match(infobox_text, pattern, error_text)
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself. (?:Industry)(?P<products>\w[a-z]*)

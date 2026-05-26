@@ -220,8 +220,23 @@ def get_height_building(building_height: str) -> str:
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(building_height)))
     #print(infobox_text)
-    pattern = r"(?:Production\w+ |Production)(?P<height>\d{4})"
-    error_text = "Page infobox has no car year information"
+    pattern = r"(?:Tip)(?P<height>.+?)\s*(?:Antenna|Roof)"
+    error_text = "Page infobox has building height information"
+    match = get_match(infobox_text, pattern, error_text)
+    
+def get_employee_amount(employee_number: str) -> str: 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(employee_number)))
+    #print(infobox_text)
+    pattern = r"(?:Number of employees)(?P<employees>.+?)\s(?:)"
+    error_text = "Page infobox has building height information"
     match = get_match(infobox_text, pattern, error_text)
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
@@ -295,6 +310,27 @@ def industry(matches: List[str]) -> List[str]:
     """
     return [get_company_industry(matches[0])]
 
+def build_height(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_height_building(matches[0])]
+
+def employee_amount(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_employee_amount(matches[0])]
 
 
 # dummy argument is ignored and doesn't matter
@@ -315,7 +351,10 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("how many episodes does % have".split(), show_episodes),# WORKS
     ("what year was the % made".split(), year_car), # WORKS
     ("who made % ".split(), dev_game),
-    ("what is % known for ".split(), industry), # WORKS
+    ("what is % known for ".split(), industry),
+    #new
+    ("how tall is the % ".split(), build_height),
+    ("how many employees does % ".split(), employee_amount), # WORKS
     #("when was % born".split(), place_born),
     (["bye"], bye_action),
 ]

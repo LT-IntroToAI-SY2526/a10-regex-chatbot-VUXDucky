@@ -223,6 +223,7 @@ def get_height_building(building_height: str) -> str:
     pattern = r"(?:Tip)(?P<height>.+?)\s*(?:Antenna|Roof)"
     error_text = "Page infobox has building height information"
     match = get_match(infobox_text, pattern, error_text)
+    return match.group("height")
     
 def get_employee_amount(employee_number: str) -> str: 
     """Gets the year of the given car
@@ -236,8 +237,156 @@ def get_employee_amount(employee_number: str) -> str:
     infobox_text = clean_text(get_first_infobox_text(get_page_html(employee_number)))
     #print(infobox_text)
     pattern = r"(?:Number of employees)(?P<employees>.+?)\s(?:)"
-    error_text = "Page infobox has building height information"
+    error_text = "Page infobox has employee information"
     match = get_match(infobox_text, pattern, error_text)
+    return match.group("employees")
+
+def get_(employee_number: str) -> str: 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(employee_number)))
+    #print(infobox_text)
+    pattern = r"(?:Number of employees)(?P<employees>.+?)\s(?:)"
+    error_text = "Page infobox has employee information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("employees")
+
+def get_currency(currency_name: str) -> str: 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(currency_name)))
+    #print(infobox_text)
+    pattern = r"(?:Currency)\s*(?P<currency>[A-Za-z ]+)"
+    error_text = "Page infobox has currency information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("currency")
+
+def get_family(family_name: str) -> str: 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(family_name)))
+    #print(infobox_text)
+    pattern = r"(?:Family:)\s(?P<family>[A-Za-z ]+)"
+    error_text = "Page infobox has family information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("family")
+
+def get_calling_code(calling_code: str) -> str: 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(calling_code)))
+    #print(infobox_text)
+    pattern = r"(?:Calling code)(?P<calling_code>.+)(?:ISO)"
+    error_text = "Page infobox has calling code information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("calling_code")
+
+def get_war(war_date: str) -> str: 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(war_date)))
+    #print(infobox_text)
+    pattern = r"(?:Date)(?P<war_time>.+)(?:Location)"
+    error_text = "Page infobox has war date information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("war_time")
+
+def get_state_capital(capital: str) -> str: 
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(capital)))
+    #print(infobox_text)
+    pattern = r"(?:Capital)(?P<state_capital>.+)(?:Largest city)"
+    error_text = "Page infobox has state capital information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("state_capital")
+
+def get_f1_drivers(f1_team: str) -> str:
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(f1_team)))
+    #print(infobox_text)
+    pattern = r"(?:Race drivers)(?P<f1_drivers>.+)(?:Test)"
+    error_text = "Page infobox has F1 drivers information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("f1_drivers")
+
+def get_food_founders(food_name: str) -> str:
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(food_name)))
+    #print(infobox_text)
+    pattern = r"(?:Founders)(?P<food_founders>.+)(?:Headquarters)"
+    error_text = "Page infobox has food founders information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("food_founders")
+
+def get_NHL_team_division(nhl_team: str) -> str:
+    """Gets the year of the given car
+
+    Args:
+        car_year - year of the car
+
+    Returns:
+        year of the given car
+    """
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(nhl_team)))
+    #print(infobox_text)
+    pattern = r"(?:Division)(?P<nhl_division>.+)(?:Founded)"
+    error_text = "Page infobox has NHL team division information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("nhl_division")
+
+
+
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself. (?:Industry)(?P<products>\w[a-z]*)
@@ -332,6 +481,95 @@ def employee_amount(matches: List[str]) -> List[str]:
     """
     return [get_employee_amount(matches[0])]
 
+def currency_type(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_currency(matches[0])]
+
+def animal_family(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_family(matches[0])]
+
+def calling_code(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_calling_code(matches[0])]
+
+def war_period(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_war(matches[0])]
+
+def state_capital(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_state_capital(matches[0])]
+
+def f1_drivers(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_f1_drivers(matches[0])]
+
+def food_founders(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_food_founders(matches[0])]
+
+def nhl_team_division(matches: List[str]) -> List[str]:
+    """Returns episodes of shows in matches
+
+    Args:
+        matches - match from pattern of shows to find amount of episodes
+
+    Returns:
+        episodes of show
+    """
+    return [get_NHL_team_division(matches[0])]
+
+
 
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
@@ -355,6 +593,14 @@ pa_list: List[Tuple[Pattern, Action]] = [
     #new
     ("how tall is the % ".split(), build_height),
     ("how many employees does % ".split(), employee_amount), # WORKS
+    ("what is the currency of % ".split(), currency_type),
+    ("what is the family of % ".split(), animal_family),
+    ("what is the calling code of % ".split(), calling_code),
+    ("what is the war period of % ".split(), war_period),
+    ("what is the state capital of % ".split(), state_capital),
+    ("who are the f1 drivers of % ".split(), f1_drivers),
+    ("who are the fast food founders of % ".split(), food_founders),
+    ("what division is % in ".split(), nhl_team_division), 
     #("when was % born".split(), place_born),
     (["bye"], bye_action),
 ]

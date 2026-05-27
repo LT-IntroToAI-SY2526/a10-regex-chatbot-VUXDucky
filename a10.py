@@ -348,7 +348,7 @@ def get_f1_drivers(f1_team: str) -> str:
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(f1_team)))
     #print(infobox_text)
-    pattern = r"(?:Race drivers)(?P<f1_drivers>.+)(?:Test)"
+    pattern = r"(?:Race drivers)(?P<f1_drivers>.+)(?:Test driver)"
     error_text = "Page infobox has F1 drivers information"
     match = get_match(infobox_text, pattern, error_text)
     return match.group("f1_drivers")
